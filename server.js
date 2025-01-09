@@ -48,6 +48,6 @@ wss.on('connection', (ws, req) => {
     });
 });
 
-server.listen(3000, () => {
+server.listen(80, () => {
     console.log('Server started on http://localhost:3000');
 });
