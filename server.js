@@ -48,6 +48,7 @@ wss.on('connection', (ws, req) => {
     });
 });
 
-server.listen(80, () => {
+const port = process.env.PORT || 4000;
+server.listen(port, () => {
     console.log('Server started on http://localhost:3000');
 });
