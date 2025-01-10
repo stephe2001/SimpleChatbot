@@ -10,6 +10,8 @@ let connections = {};
 
 wss.on('connection', (ws, req) => {
 
+	console.log('websocket started');
+
     ws.on('message', (m) => {
 		const message = JSON.parse(m);
 		const company = message.company;
@@ -48,7 +50,9 @@ wss.on('connection', (ws, req) => {
     });
 });
 
+wss.on('error', (e) => { console.log('error'); console.log(e); });
+
 const port = process.env.PORT || 4000;
 server.listen(port, () => {
-    console.log('Server started on http://localhost:3000');
+    console.log('Server started on port:'+port);
 });
