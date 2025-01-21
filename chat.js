@@ -5,7 +5,7 @@ class Chat {
     messageInput;
 
     company;
-    usertype;
+    usertype
     userid;
     username;
 
@@ -19,10 +19,13 @@ class Chat {
         this.usertype = el.getAttribute('data-usertype');
         this.userid = el.getAttribute('data-userid');
         this.username = el.getAttribute('data-username');
+
+        this.sendBtn.setAttribute('disabled', 'disabled');
     }
 
     init() {
         // activate send button
+        this.sendBtn.removeAttribute('disabled');
         this.sendBtn.addEventListener('click', () => { this.submitMessage(); });
         this.messageInput.addEventListener('keydown', (e) => {
             if(e.keyCode == 13) {
@@ -79,30 +82,35 @@ function initChats() {
     for ( let el of els ) chats.add( new Chat(el) );
 
     // start websocket
-    const ws = new WebSocket('ws://demo.php:3000');
+    const ws = new WebSocket('wss://simplechatbot-670i.onrender.com');
+
+    //ws.onerror = (e) => { console.log('error !'); console.log(e); };
 
     ws.onopen = () => {
         console.log('Connected to the server');
 
         // listen to local messages
         document.addEventListener("sendMessage", (e) => {
-            console.log('ready to be sent');
-            ws.send(JSON.stringify(e.detail));
+            console.log('ready to send message: ' + e.detail);
+            ws.send( JSON.stringify(e.detail) );
         })
 
         // listen to remote messages
         ws.onmessage = (event) => {
+            console.log('received message');
             if (event.data instanceof Blob) {
                 // Convert Blob to string
                 const reader = new FileReader();
                 reader.onload = function () {
                     const text = reader.result;
                     const message = JSON.parse(text);
+                    console.log(message);
                     chats.forEach( (c) => { c.displayMessage(message); } );
                 };
                 reader.readAsText(event.data);
             } else {
                 const message = JSON.parse(event.data);
+                console.log(message);
                 chats.forEach( (c) => { c.displayMessage(message); } );
             }
         };
@@ -111,6 +119,7 @@ function initChats() {
         // init chats
         chats.forEach( (c) => {
             c.init();
+            console.log('initiating chat for company: ' + c.company );
             ws.send(JSON.stringify({ "type": "init", "company": c.company }));
         });
 
@@ -120,6 +129,6 @@ function initChats() {
 
 
 document.addEventListener('DOMContentLoaded', function(event) {
-    console.log('start');
+    console.log('starting chat');
     initChats();
 });
