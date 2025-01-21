@@ -1,5 +1,5 @@
-// const WSServer = 'wss://simplechatbot-670i.onrender.com';
-const WSServer = 'ws://localhost:10000';
+const WSServer = 'wss://simplechatbot-670i.onrender.com';
+// const WSServer = 'ws://localhost:10000';
 
 
 const ws = new WebSocket(WSServer);
